@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { handleApiError } from '../services/api';
 import './Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - em produção isso seria uma chamada para a API
-    if (email && password) {
-      navigate('/dashboard');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const success = await login(email, password);
+      if (success) {
+        navigate('/dashboard');
+      } else {
+        setError('Email ou senha inválidos');
+      }
+    } catch (error: any) {
+      setError(handleApiError(error));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,8 +67,18 @@ const Login: React.FC = () => {
             />
           </div>
           
-          <button type="submit" className="btn btn-primary login-btn">
-            Entrar
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary login-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
         

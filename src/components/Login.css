@@ -94,3 +94,20 @@
   font-size: 14px;
   font-style: italic;
 }
+
+.login-btn:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ffcdd2;
+  font-size: 14px;
+  text-align: center;
+}

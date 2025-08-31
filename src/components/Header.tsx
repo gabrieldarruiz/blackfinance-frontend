@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Header.css';
 
 const Header: React.FC = () => {
-  const location = useLocation();
-  const isLoggedIn = location.pathname !== '/';
+  const { isAuthenticated, user, logout } = useAuth();
 
-  if (!isLoggedIn) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <header className="header">
@@ -23,8 +23,8 @@ const Header: React.FC = () => {
             <Link to="/notifications" className="nav-link">Notificações</Link>
           </nav>
           <div className="user-menu">
-            <span className="user-name">Admin</span>
-            <Link to="/" className="btn btn-secondary">Sair</Link>
+            <span className="user-name">{user?.name || 'Usuário'}</span>
+            <button onClick={logout} className="btn btn-secondary">Sair</button>
           </div>
         </div>
       </div>

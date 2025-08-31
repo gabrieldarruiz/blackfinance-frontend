@@ -151,17 +151,17 @@
   white-space: nowrap;
 }
 
-.status.ativo {
+.status.active {
   background-color: #E8F5E8;
   color: #2E7D32;
 }
 
-.status.agendado {
+.status.scheduled {
   background-color: #FFF3E0;
   color: #F57C00;
 }
 
-.status.cancelado {
+.status.cancelled {
   background-color: #FFEBEE;
   color: #C62828;
 }
@@ -221,4 +221,32 @@
   .event-actions {
     flex-direction: column;
   }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.error-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: #ffebee;
+  border-radius: 8px;
+  border: 1px solid #ffcdd2;
+  margin: 20px 0;
+}
+
+.error-message h2 {
+  color: #c62828;
+  margin-bottom: 16px;
+}
+
+.error-message p {
+  color: #c62828;
+  margin-bottom: 20px;
 }

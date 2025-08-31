@@ -166,3 +166,38 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.error-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: #ffebee;
+  border-radius: 8px;
+  border: 1px solid #ffcdd2;
+  margin: 20px 0;
+}
+
+.error-message h2 {
+  color: #c62828;
+  margin-bottom: 16px;
+}
+
+.error-message p {
+  color: #c62828;
+  margin-bottom: 20px;
+}
+
+.no-events {
+  text-align: center;
+  color: var(--text-color);
+  font-style: italic;
+  padding: 20px;
+}
