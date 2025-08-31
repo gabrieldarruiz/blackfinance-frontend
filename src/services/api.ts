@@ -205,6 +205,10 @@ class ApiService {
     return this.api.put(`/notifications/${id}`, notificationData);
   }
 
+  async resendNotification(id: number): Promise<AxiosResponse<Notification>> {
+    return this.api.post(`/notifications/${id}/send`);
+  }
+
   async deleteNotification(id: number): Promise<AxiosResponse> {
     return this.api.delete(`/notifications/${id}`);
   }
@@ -214,7 +218,11 @@ class ApiService {
   }
 
   async scheduleNotification(id: number, scheduledAt: string): Promise<AxiosResponse> {
-    return this.api.post(`/notifications/${id}/schedule`, { scheduledAt });
+    return this.api.post(`/notifications/${id}/schedule`, { scheduled_at: scheduledAt });
+  }
+
+  async cancelScheduledNotification(id: number): Promise<AxiosResponse> {
+    return this.api.post(`/notifications/${id}/cancel`);
   }
 
   // Métodos do dashboard

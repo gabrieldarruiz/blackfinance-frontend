@@ -116,7 +116,14 @@ const NotificationCenter: React.FC = () => {
 
   const handleResend = async (notification: Notification) => {
     try {
-      await apiService.resendNotification(notification.id);
+      const response = await apiService.resendNotification(notification.id);
+      
+      // Verificar se a API retornou sucesso
+      if (response.data.success === false) {
+        alert('Erro ao reenviar notificação: ' + response.data.message);
+        return;
+      }
+      
       alert('Notificação reenviada com sucesso!');
       fetchNotifications();
     } catch (error) {

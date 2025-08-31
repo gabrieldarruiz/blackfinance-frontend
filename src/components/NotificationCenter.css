@@ -108,6 +108,17 @@
   padding: 10px 16px;
 }
 
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
 .notification-form {
   display: flex;
   flex-direction: column;
