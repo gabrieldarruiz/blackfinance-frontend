@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  black-finance:
+    build: .
+    container_name: black-finance-app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+    command: ["npm", "start"]

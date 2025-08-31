@@ -1,0 +1,139 @@
+.notification-center {
+  padding: 32px 0;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.notification-info h3 {
+  color: var(--primary-color);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.notification-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.type,
+.audience,
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.type.event {
+  background-color: #E3F2FD;
+  color: #1976D2;
+}
+
+.type.reminder {
+  background-color: #FFF3E0;
+  color: #F57C00;
+}
+
+.type.announcement {
+  background-color: #E8F5E8;
+  color: #2E7D32;
+}
+
+.audience {
+  background-color: #F3E5F5;
+  color: #7B1FA2;
+}
+
+.status.draft {
+  background-color: #F5F5F5;
+  color: #757575;
+}
+
+.status.sent {
+  background-color: #E8F5E8;
+  color: #2E7D32;
+}
+
+.status.scheduled {
+  background-color: #FFF3E0;
+  color: #F57C00;
+}
+
+.notification-date {
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.notification-message {
+  color: var(--text-color);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.notification-actions .btn {
+  font-size: 14px;
+  padding: 10px 16px;
+}
+
+.notification-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification-form .form-group select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  transition: border-color 0.3s ease;
+}
+
+.notification-form .form-group select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+  .notification-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .notification-meta {
+    gap: 8px;
+  }
+  
+  .notification-actions {
+    flex-direction: column;
+  }
+}
