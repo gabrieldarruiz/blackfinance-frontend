@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { apiService, Event } from '../services/api';
-import { handleApiError } from '../services/api';
+import { apiService, Event, handleApiError } from '../services/api';
+import EventParticipants from './EventParticipants';
 import './EventManagement.css';
 
 const EventManagement: React.FC = () => {
@@ -13,6 +13,8 @@ const EventManagement: React.FC = () => {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showParticipantsModal, setShowParticipantsModal] = useState(false);
+  const [selectedEventForParticipants, setSelectedEventForParticipants] = useState<Event | null>(null);
   const [notificationData, setNotificationData] = useState({
     title: '',
     message: '',
@@ -124,6 +126,11 @@ const EventManagement: React.FC = () => {
       targetAudience: 'event_participants'
     });
     setShowNotificationModal(true);
+  };
+
+  const handleViewParticipants = (event: Event) => {
+    setSelectedEventForParticipants(event);
+    setShowParticipantsModal(true);
   };
 
   const handleNotificationSubmit = async (e: React.FormEvent) => {
@@ -501,26 +508,40 @@ const EventManagement: React.FC = () => {
                 </div>
               </div>
 
-              <div className="event-actions">
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => handleEdit(event)}
-                >
-                  Editar
-                </button>
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => handleSendNotification(event)}
-                >
-                  Enviar Notificação
-                </button>
-              </div>
+                             <div className="event-actions">
+                 <button 
+                   className="btn btn-secondary"
+                   onClick={() => handleEdit(event)}
+                 >
+                   Editar
+                 </button>
+                 <button 
+                   className="btn btn-primary"
+                   onClick={() => handleSendNotification(event)}
+                 >
+                   Enviar Notificação
+                 </button>
+                 <button 
+                   className="btn btn-info"
+                   onClick={() => handleViewParticipants(event)}
+                 >
+                   Ver Participantes
+                 </button>
+               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+                 </div>
+
+         {showParticipantsModal && selectedEventForParticipants && (
+           <EventParticipants
+             eventId={selectedEventForParticipants.id}
+             eventTitle={selectedEventForParticipants.title}
+             onClose={() => setShowParticipantsModal(false)}
+           />
+         )}
+       </div>
+     </div>
+   );
+ };
 
 export default EventManagement;

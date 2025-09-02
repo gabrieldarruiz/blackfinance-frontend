@@ -1,5 +1,14 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
+// Declaração de tipo para Vite
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_URL?: string;
+    };
+  }
+}
+
 // Configuração base da API
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -74,6 +83,30 @@ export interface Notification {
   event?: Event;
 }
 
+// Interface para Participante de Evento
+export interface EventParticipant {
+  id: number;
+  event_id: number;
+  user_id: number;
+  status: 'registered' | 'confirmed' | 'cancelled' | 'attended';
+  created_at: string;
+  updated_at?: string;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  };
+}
+
+// Interface para Estatísticas de Participantes
+export interface EventParticipantStats {
+  total_participants: number;
+  confirmed_participants: number;
+  cancelled_participants: number;
+  pending_participants: number;
+}
+
 // Interface para estatísticas do Dashboard
 export interface DashboardStats {
   total_events: number;
@@ -124,16 +157,16 @@ class ApiService {
           // Token expirado, tentar refresh
           const refreshToken = localStorage.getItem('refreshToken');
           if (refreshToken) {
-                         try {
-               const response = await this.refreshToken(refreshToken);
-               if (response.data?.access_token) {
-                 localStorage.setItem('token', response.data.access_token);
+            try {
+              const response = await this.refreshToken(refreshToken);
+              if (response.data?.access_token) {
+                localStorage.setItem('token', response.data.access_token);
                 // Reenviar requisição original
-                                 const originalRequest = error.config;
-                 if (originalRequest) {
-                   originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
-                   return this.api(originalRequest);
-                 }
+                const originalRequest = error.config;
+                if (originalRequest) {
+                  originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
+                  return this.api(originalRequest);
+                }
               }
             } catch (refreshError) {
               // Refresh falhou, limpar tokens mas não redirecionar
@@ -172,7 +205,7 @@ class ApiService {
   }
 
   // Métodos de eventos
-  async getEvents(): Promise<AxiosResponse<Event[]>> {
+  async getEvents(): Promise<AxiosResponse<ApiResponse<Event[]>>> {
     return this.api.get('/events');
   }
 
@@ -193,7 +226,7 @@ class ApiService {
   }
 
   // Métodos de notificações
-  async getNotifications(): Promise<AxiosResponse<Notification[]>> {
+  async getNotifications(): Promise<AxiosResponse<ApiResponse<Notification[]>>> {
     return this.api.get('/notifications');
   }
 
@@ -205,7 +238,7 @@ class ApiService {
     return this.api.put(`/notifications/${id}`, notificationData);
   }
 
-  async resendNotification(id: number): Promise<AxiosResponse<Notification>> {
+  async resendNotification(id: number): Promise<AxiosResponse<ApiResponse<Notification>>> {
     return this.api.post(`/notifications/${id}/send`);
   }
 
@@ -217,24 +250,24 @@ class ApiService {
     return this.api.post(`/notifications/${id}/send`);
   }
 
-  async scheduleNotification(id: number, scheduledAt: string): Promise<AxiosResponse> {
+  async scheduleNotification(id: number, scheduledAt: string): Promise<AxiosResponse<ApiResponse<Notification>>> {
     return this.api.post(`/notifications/${id}/schedule`, { scheduled_at: scheduledAt });
   }
 
-  async cancelScheduledNotification(id: number): Promise<AxiosResponse> {
+  async cancelScheduledNotification(id: number): Promise<AxiosResponse<ApiResponse<any>>> {
     return this.api.post(`/notifications/${id}/cancel`);
   }
 
   // Métodos do dashboard
-  async getDashboardStats(): Promise<AxiosResponse<DashboardStats>> {
+  async getDashboardStats(): Promise<AxiosResponse<ApiResponse<DashboardStats>>> {
     return this.api.get('/dashboard/stats');
   }
 
-  async getRecentEvents(): Promise<AxiosResponse<Event[]>> {
+  async getRecentEvents(): Promise<AxiosResponse<ApiResponse<Event[]>>> {
     return this.api.get('/dashboard/recent-events');
   }
 
-  async getUpcomingEvents(): Promise<AxiosResponse<Event[]>> {
+  async getUpcomingEvents(): Promise<AxiosResponse<ApiResponse<Event[]>>> {
     return this.api.get('/dashboard/upcoming-events');
   }
 
@@ -251,9 +284,36 @@ class ApiService {
     return this.api.put(`/users/${id}`, userData);
   }
 
-  async deleteUser(id: number): Promise<AxiosResponse> {
+  async deleteUser(id: number): Promise<AxiosResponse<ApiResponse<any>>> {
     return this.api.delete(`/users/${id}`);
   }
+
+  // Event Participants Management
+  async getEventParticipants(eventId: number): Promise<AxiosResponse<ApiResponse<EventParticipant[]>>> {
+    return this.api.get(`/events/${eventId}/participants`);
+  }
+
+  async confirmEventParticipant(eventId: number, userId: number): Promise<AxiosResponse<ApiResponse<EventParticipant>>> {
+    return this.api.post(`/events/${eventId}/participants/${userId}/confirm`);
+  }
+
+  async cancelEventParticipant(eventId: number, userId: number): Promise<AxiosResponse<ApiResponse<EventParticipant>>> {
+    return this.api.post(`/events/${eventId}/participants/${userId}/cancel`);
+  }
+
+        async getEventParticipantStats(eventId: number): Promise<AxiosResponse<ApiResponse<EventParticipantStats>>> {
+          return this.api.get(`/events/${eventId}/participants/stats`);
+        }
+
+        // Register participant in event
+        async registerEventParticipant(eventId: number, userId: number): Promise<AxiosResponse<ApiResponse<any>>> {
+          return this.api.post(`/events/${eventId}/register`, { user_id: userId });
+        }
+
+        // Reactivate cancelled participant
+        async reactivateEventParticipant(eventId: number, userId: number): Promise<AxiosResponse<ApiResponse<any>>> {
+          return this.api.post(`/events/${eventId}/participants/${userId}/reactivate`);
+        }
 }
 
 // Instância singleton da API
