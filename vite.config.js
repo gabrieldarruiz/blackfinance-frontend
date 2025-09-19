@@ -5,8 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
-    host: true
+    port: 8000,
+    host: true,
+    allowedHosts: ['blackfinance.astrasolution.com.br']
   },
   build: {
     outDir: 'build',

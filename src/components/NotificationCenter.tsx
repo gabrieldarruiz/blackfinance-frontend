@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiService, Notification } from '../services/api';
 import { handleApiError } from '../services/api';
+import { useModal } from '../hooks/useModal';
+import ErrorModal from './ErrorModal';
 import './NotificationCenter.css';
 
 const NotificationCenter: React.FC = () => {
+  const { modal, showSuccess, showError, hideModal } = useModal();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -120,15 +123,15 @@ const NotificationCenter: React.FC = () => {
       
       // Verificar se a API retornou sucesso
       if (response.data.success === false) {
-        alert('Erro ao reenviar notificação: ' + response.data.message);
+        showError('Erro', 'Erro ao reenviar notificação: ' + response.data.message);
         return;
       }
       
-      alert('Notificação reenviada com sucesso!');
+      showSuccess('Sucesso', 'Notificação reenviada com sucesso!');
       fetchNotifications();
     } catch (error) {
       console.error('Erro ao reenviar notificação:', error);
-      alert('Erro ao reenviar notificação: ' + handleApiError(error));
+      showError('Erro', 'Erro ao reenviar notificação: ' + handleApiError(error));
     }
   };
 
@@ -150,10 +153,10 @@ const NotificationCenter: React.FC = () => {
       setScheduleDate('');
       setScheduleTime('');
       fetchNotifications();
-      alert('Notificação agendada com sucesso!');
+      showSuccess('Sucesso', 'Notificação agendada com sucesso!');
     } catch (error) {
       console.error('Erro ao agendar notificação:', error);
-      alert('Erro ao agendar notificação: ' + handleApiError(error));
+      showError('Erro', 'Erro ao agendar notificação: ' + handleApiError(error));
     }
   };
 
@@ -492,6 +495,14 @@ const NotificationCenter: React.FC = () => {
             </div>
           ))}
         </div>
+
+        <ErrorModal
+          isOpen={modal.isOpen}
+          onClose={hideModal}
+          title={modal.title}
+          message={modal.message}
+          type={modal.type}
+        />
       </div>
     </div>
   );

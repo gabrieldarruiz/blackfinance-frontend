@@ -1,5 +1,5 @@
 # Use a imagem oficial do Node.js como base
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Defina o diretório de trabalho no contêiner
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instale as dependências do projeto
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copie todo o código da aplicação
 COPY . .
@@ -20,4 +20,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Comando para rodar a aplicação
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

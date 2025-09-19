@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService, EventParticipant, EventParticipantStats, handleApiError } from '../services/api';
+import { useModal } from '../hooks/useModal';
+import ErrorModal from './ErrorModal';
 import './EventParticipants.css';
 
 interface EventParticipantsProps {
@@ -9,6 +11,7 @@ interface EventParticipantsProps {
 }
 
 const EventParticipants: React.FC<EventParticipantsProps> = ({ eventId, eventTitle, onClose }) => {
+  const { modal, showSuccess, showError, showWarning, hideModal } = useModal();
   const [participants, setParticipants] = useState<EventParticipant[]>([]);
   const [stats, setStats] = useState<EventParticipantStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,42 +71,42 @@ const EventParticipants: React.FC<EventParticipantsProps> = ({ eventId, eventTit
   const handleConfirmParticipant = async (participant: EventParticipant) => {
     try {
       await apiService.confirmEventParticipant(eventId, participant.user_id);
-      alert('Participante confirmado com sucesso!');
+      showSuccess('Sucesso', 'Participante confirmado com sucesso!');
       fetchParticipants();
       fetchStats();
     } catch (error) {
       console.error('Erro ao confirmar participante:', error);
-      alert('Erro ao confirmar participante: ' + handleApiError(error));
+      showError('Erro', 'Erro ao confirmar participante: ' + handleApiError(error));
     }
   };
 
   const handleCancelParticipant = async (participant: EventParticipant) => {
     try {
       await apiService.cancelEventParticipant(eventId, participant.user_id);
-      alert('Participação cancelada com sucesso!');
+      showSuccess('Sucesso', 'Participação cancelada com sucesso!');
       fetchParticipants();
       fetchStats();
     } catch (error) {
       console.error('Erro ao cancelar participação:', error);
-      alert('Erro ao cancelar participação: ' + handleApiError(error));
+      showError('Erro', 'Erro ao cancelar participação: ' + handleApiError(error));
     }
   };
 
   const handleReactivateParticipant = async (participant: EventParticipant) => {
     try {
       await apiService.reactivateEventParticipant(eventId, participant.user_id);
-      alert('Participante reativado com sucesso!');
+      showSuccess('Sucesso', 'Participante reativado com sucesso!');
       fetchParticipants();
       fetchStats();
     } catch (error) {
       console.error('Erro ao reativar participante:', error);
-      alert('Erro ao reativar participante: ' + handleApiError(error));
+      showError('Erro', 'Erro ao reativar participante: ' + handleApiError(error));
     }
   };
 
   const handleAddSelectedUsers = async () => {
     if (selectedUsers.length === 0) {
-      alert('Selecione pelo menos um usuário!');
+      showWarning('Atenção', 'Selecione pelo menos um usuário!');
       return;
     }
 
@@ -143,11 +146,11 @@ const EventParticipants: React.FC<EventParticipantsProps> = ({ eventId, eventTit
 
       // Mostrar resultado
       if (successCount > 0) {
-        alert(`${successCount} participante(s) processado(s) com sucesso!`);
+        showSuccess('Sucesso', `${successCount} participante(s) processado(s) com sucesso!`);
       }
       
       if (errorCount > 0) {
-        alert(`Erros encontrados:\n${errors.join('\n')}`);
+        showError('Erros Encontrados', `Erros encontrados:\n${errors.join('\n')}`);
       }
 
       // Limpar seleção e fechar modal
@@ -159,7 +162,7 @@ const EventParticipants: React.FC<EventParticipantsProps> = ({ eventId, eventTit
       fetchStats();
     } catch (error) {
       console.error('Erro ao adicionar participantes:', error);
-      alert('Erro ao registrar participantes: ' + handleApiError(error));
+      showError('Erro', 'Erro ao registrar participantes: ' + handleApiError(error));
     } finally {
       setIsAddingParticipant(false);
     }
@@ -421,6 +424,14 @@ const EventParticipants: React.FC<EventParticipantsProps> = ({ eventId, eventTit
           </button>
         </div>
       </div>
+
+      <ErrorModal
+        isOpen={modal.isOpen}
+        onClose={hideModal}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+      />
     </div>
   );
 };

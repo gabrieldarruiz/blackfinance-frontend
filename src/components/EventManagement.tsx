@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiService, Event, handleApiError } from '../services/api';
 import EventParticipants from './EventParticipants';
+import { useModal } from '../hooks/useModal';
+import ErrorModal from './ErrorModal';
 import './EventManagement.css';
 
 const EventManagement: React.FC = () => {
+  const { modal, showSuccess, showError, hideModal } = useModal();
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -156,10 +159,10 @@ const EventManagement: React.FC = () => {
         type: 'event',
         targetAudience: 'event_participants'
       });
-      alert('Notificação enviada com sucesso!');
+      showSuccess('Sucesso', 'Notificação enviada com sucesso!');
     } catch (error) {
       console.error('Erro ao enviar notificação:', error);
-      alert('Erro ao enviar notificação: ' + handleApiError(error));
+      showError('Erro', 'Erro ao enviar notificação: ' + handleApiError(error));
     }
   };
 
@@ -539,6 +542,14 @@ const EventManagement: React.FC = () => {
              onClose={() => setShowParticipantsModal(false)}
            />
          )}
+
+         <ErrorModal
+           isOpen={modal.isOpen}
+           onClose={hideModal}
+           title={modal.title}
+           message={modal.message}
+           type={modal.type}
+         />
        </div>
      </div>
    );

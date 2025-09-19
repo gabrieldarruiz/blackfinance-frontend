@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  black-finance:
+    build: .
+    container_name: black-finance-app
+    ports:
+      - "8001:8000"
+    networks:
+      - root_astra_net
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+    command: ["npm", "run", "dev"]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.black-finance.rule=Host(`blackfinance.astrasolution.com.br`)
+      - traefik.http.routers.black-finance.entrypoints=web
+      - traefik.http.routers.black-finance.middlewares=black-finance-headers@docker
+      - traefik.http.middlewares.black-finance-headers.headers.browserXSSFilter=true
+      - traefik.http.middlewares.black-finance-headers.headers.contentTypeNosniff=true
+      - traefik.http.services.black-finance.loadbalancer.server.port=8000
+
+networks:
+  root_astra_net:
+    external: true
