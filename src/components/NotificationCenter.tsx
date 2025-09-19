@@ -464,7 +464,12 @@ const NotificationCenter: React.FC = () => {
                   </div>
                 </div>
                 <div className="notification-date">
-                  {new Date(notification.sent_at).toLocaleDateString('pt-BR')}
+                  {notification.sent_at 
+                    ? new Date(notification.sent_at).toLocaleDateString('pt-BR')
+                    : notification.scheduled_at 
+                      ? `Agendado para: ${new Date(notification.scheduled_at).toLocaleDateString('pt-BR')}`
+                      : 'Rascunho'
+                  }
                 </div>
               </div>
               
